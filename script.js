@@ -58,16 +58,26 @@ function onAddItemSubmit(e){
   
 }
 
-function addItemtoDOM(newItem){
+function addItemtoDOM(newItem) {
   const li = document.createElement('li');
+  li.classList.add('fade-in'); // Add fade-in animation class
 
-  li.appendChild(document.createTextNode(newItem))
+  li.appendChild(document.createTextNode(newItem));
 
   const button = createButton('remove-item btn-link text-red');
   li.appendChild(button);
- //  checkUI();
+
   itemList.appendChild(li);
 
+  if (itemList.children.length > 5) {
+    itemList.classList.add('grid-layout');
+  } else {
+    itemList.classList.remove('grid-layout');
+  }
+
+  setTimeout(() => {
+    li.classList.remove('fade-in'); // Remove animation class after a few seconds
+  }, 500); // Duration of the animation
 }
 
 function addItemToStorage(item){
@@ -133,12 +143,23 @@ localStorage.setItem("item", itemFromStorage);
 }
 
 
-function clearItems(){
-  while(itemList.firstChild){
-    itemList.removeChild(itemList.firstChild);
-    //itemList.innerHTML = '';
-  }
-  checkUI();
+function clearItems() {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "This will remove all items from your list!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, clear it!',
+    cancelButtonText: 'No, keep it'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      while (itemList.firstChild) {
+        itemList.removeChild(itemList.firstChild);
+      }
+      checkUI();
+      Swal.fire('Cleared!', 'Your shopping list is now empty.', 'success');
+    }
+  });
 }
 
 function showNextScreen(){
@@ -162,17 +183,6 @@ function checkUI(){
     itemFilter.style.display="block";
   }
 }
-// function nameEntered(){
-  
-//   name.addEventListener('input', function(e){
-//     if(e.target.value.trim() ===''){
-//       x = false;
-//       alert(' Enter Full name it is a mandatory Field')
-//     }
-
-//   })
-//   return x;
-// }
 
 function filterItems(e){
   
